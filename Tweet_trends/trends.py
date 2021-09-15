@@ -25,14 +25,14 @@ api = tweepy.API(auth)
 trends = api.trends_place(1)
   
 # printing the information
-print("The top trends for the location are :")
   
 for value in trends:
     for trend in value['trends']:
         data={
             'name':trend['name'],
             'url':trend['url'],
-            'query':trend['query']
+            'query':trend['query'],
+            'tweet_volume':trend['tweet_volume']
         }
         es.index(index="trending_hashtags", doc_type='trends', body=data, request_timeout=200)
 
