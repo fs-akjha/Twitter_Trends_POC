@@ -23,7 +23,7 @@ def get_data_from_elastic(search_trending_hashtag):
             }
         },
         "sort": [
-            { "created_at": "asc" }
+            { "tweet_created_date": "asc" }
             ]
         }
     basic_data = es.search(index="trending_hashtags_tweets", scroll = "2m",body=query,size=10000)

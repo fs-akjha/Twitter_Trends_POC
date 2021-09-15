@@ -44,18 +44,21 @@ end_date = datetime.datetime(2020, 1, 19, 13, 00, 00)
 
 for tweet in tweepy.Cursor(api.search, q='#Ravens', rpp=100).items(MAX_TWEETS):
     all_data={
-        "id":tweet.user.id,
-        "username": tweet.user.screen_name,
-        "created_at":tweet.user.created_at,
-        "text":tweet.text,
-        "description": tweet.user.description,
-        "location" :tweet.user.location,
-        "following" : tweet.user.friends_count,
-        "followers" : tweet.user.followers_count,
-        "totaltweets" : tweet.user.statuses_count,
-        "retweetcount" : tweet.retweet_count,
-        "hashtags" : tweet.entities['hashtags']
-    }
+                "id":tweet.user.id,
+                "tweet_id":tweet.id,
+                "username": tweet.user.screen_name,
+                "created_at":tweet.user.created_at,
+                "text":tweet.text,
+                "source":tweet.source,
+                "tweet_created_date":tweet.created_at,
+                "description": tweet.user.description,
+                "location" :tweet.user.location,
+                "following" : tweet.user.friends_count,
+                "followers" : tweet.user.followers_count,
+                "totaltweets" : tweet.user.statuses_count,
+                "retweetcount" : tweet.retweet_count,
+                "hashtags" : tweet.entities['hashtags']
+            }
     # msgs.append(all_data)
-    es.index(index="trending_hashtags_tweets", doc_type='trendstweets', id=tweet.user.id,body=all_data, request_timeout=200)
+    es.index(index="trending_hashtags_tweets", doc_type='trendstweets', id=tweet.id,body=all_data, request_timeout=200)
 print("Data added")
