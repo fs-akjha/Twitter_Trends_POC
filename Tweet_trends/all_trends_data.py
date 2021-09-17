@@ -35,7 +35,7 @@ MAX_TWEETS = 50000
 auth = tweepy.OAuthHandler(TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET)
 api = tweepy.API(auth)
 api = tweepy.API(auth,wait_on_rate_limit = True)
-
+all_tweets=[]
 df = pd.DataFrame(columns=['text', 'source', 'url'])
 msgs = []
 msg =[]
@@ -47,10 +47,13 @@ for tweet in tweepy.Cursor(api.search, q='#Ravens', rpp=100).items(MAX_TWEETS):
                 "id":tweet.user.id,
                 "tweet_id":tweet.id,
                 "username": tweet.user.screen_name,
+                "name":tweet.user.name,
+                'freinds':api.get_user(tweet.user.id).friends_count,
                 "created_at":tweet.user.created_at,
                 "text":tweet.text,
                 "source":tweet.source,
                 "tweet_created_date":tweet.created_at,
+                "tweet_url":"https://twitter.com/twitter/statuses/{}".format(tweet.id),
                 "description": tweet.user.description,
                 "location" :tweet.user.location,
                 "following" : tweet.user.friends_count,
@@ -59,6 +62,6 @@ for tweet in tweepy.Cursor(api.search, q='#Ravens', rpp=100).items(MAX_TWEETS):
                 "retweetcount" : tweet.retweet_count,
                 "hashtags" : tweet.entities['hashtags']
             }
-    # msgs.append(all_data)
+    all_tweets.append(all_data)
     es.index(index="trending_hashtags_tweets", doc_type='trendstweets', id=tweet.id,body=all_data, request_timeout=200)
-print("Data added")
+print(all_tweets)
